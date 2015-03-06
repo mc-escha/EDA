@@ -1,0 +1,23 @@
+household_power_consumption<-read.table(file ="household_power_consumption.txt", colClasses=c("character", "character"), header = TRUE, sep = ";")
+household_power_consumption$Date<-as.Date(household_power_consumption$Date, format ="%d/%m/%Y")
+#household_power_consumption<-x
+household_power_consumption<-subset(household_power_consumption, Date >= "2007/02/01")
+household_power_consumption<-subset(household_power_consumption, Date <= "2007/02/02")
+
+household_power_consumption$DateTime<- with(household_power_consumption, { timestamp=format(as.POSIXlt(paste(Date, Time))) })
+household_power_consumption$DateTime2<-as.POSIXlt(household_power_consumption$DateTime)
+household_power_consumption$Sub_metering_1<-as.numeric(household_power_consumption$Sub_metering_1)
+household_power_consumption$Sub_metering_2<-as.numeric(household_power_consumption$Sub_metering_2)
+household_power_consumption$Global_active_power<-as.numeric(household_power_consumption$Global_active_power)*1000
+
+png(filename= "Plot 4.png")
+par(mfrow=c(2,2))
+plot(household_power_consumption$DateTime2,household_power_consumption$Global_active_power, type ="l",xlab ="", ylab = "Global Active Power (kilowatts)")
+plot(household_power_consumption$DateTime2,household_power_consumption$Voltage, type ="l",xlab="datetime", ylab="Voltage")
+plot(household_power_consumption$DateTime2,household_power_consumption$Sub_metering_1, type ="l", xlab="",ylab="Energy sub metering")
+lines(household_power_consumption$DateTime2, household_power_consumption$Sub_metering_2, type ="l", col = "red")
+lines(household_power_consumption$DateTime2, household_power_consumption$Sub_metering_3, type ="l", col = "blue")
+legend("topright", rect(c(10, 5)), legend=c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), bty = "n",lwd=2,
+       col=c("black", "red","blue"))
+plot(household_power_consumption$DateTime2, household_power_consumption$Global_reactive_power, type = "l", xlab="datetime", ylab="Global_reactive_power")
+dev.off()
